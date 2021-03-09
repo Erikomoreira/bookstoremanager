@@ -1,5 +1,4 @@
 logging:
   level:
-    br:
       com:
-        matheussantos: DEBUG
+        erik: DEBUG

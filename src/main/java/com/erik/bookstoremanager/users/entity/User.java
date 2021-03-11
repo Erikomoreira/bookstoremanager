@@ -1,6 +1,8 @@
 package com.erik.bookstoremanager.users.entity;
 
 import com.erik.bookstoremanager.books.entity.Book;
+import com.erik.bookstoremanager.entity.Auditable;
+import com.erik.bookstoremanager.users.enums.Gender;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

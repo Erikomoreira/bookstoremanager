@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public abstract class Auditable {
 
     @CreatedDate
-    @Column(nullable = false)
+    @Column(nullable = true)
     protected LocalDateTime createdDate;
 
     @LastModifiedDate

@@ -7,7 +7,6 @@ import com.erik.bookstoremanager.author.exception.AuthorAlreadyExistsException;
 import com.erik.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.erik.bookstoremanager.author.mapper.AuthorMapper;
 import com.erik.bookstoremanager.author.repository.AuthorRepository;
-import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,9 +15,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +57,7 @@ public class AuthorServiceTest {
         AuthorDTO createdAuthorDTO = authorService.create(expectedAuthorToCreateDTO);
 
         //then
-        assertThat(createdAuthorDTO, Is.is(IsEqual.equalTo(expectedAuthorToCreateDTO)));
+        assertThat(createdAuthorDTO, is(IsEqual.equalTo(expectedAuthorToCreateDTO)));
     }
 
     @Test
@@ -78,7 +82,7 @@ public class AuthorServiceTest {
 
         AuthorDTO foundAuthorDTO = authorService.findById(expectedFoundAuthorDTO.getId());
 
-        assertThat(foundAuthorDTO, Is.is(IsEqual.equalTo((expectedFoundAuthorDTO))));
+        assertThat(foundAuthorDTO, is(IsEqual.equalTo((expectedFoundAuthorDTO))));
 
     }
 
@@ -91,5 +95,29 @@ public class AuthorServiceTest {
 
         assertThrows(AuthorNotFoundException.class, () -> authorService.findById(expectedFoundAuthorDTO.getId()));
 
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenItShouldBeReturned() {
+
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+        Author expectedFoundAuthor = authorMapper.toModel(expectedFoundAuthorDTO);
+
+        when(authorRepository.findAll()).thenReturn(singletonList(expectedFoundAuthor));
+
+        List<AuthorDTO> foundAuthorDTO = authorService.findAll();
+
+        assertThat(foundAuthorDTO.size(), is(1));
+        assertThat(foundAuthorDTO.get(0), is(equalTo(expectedFoundAuthorDTO)));
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenAnEmptyListShouldBeReturned() {
+
+        when(authorRepository.findAll()).thenReturn(EMPTY_LIST);
+
+        List<AuthorDTO> foundAuthorDTO = authorService.findAll();
+
+        assertThat(foundAuthorDTO.size(), is(0));
     }
 }

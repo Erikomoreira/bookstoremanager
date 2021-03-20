@@ -16,4 +16,12 @@ public interface AuthorControllerDocs {
     })
     AuthorDTO create(AuthorDTO authorDTO);
 
+
+    @ApiOperation(value = "Find author by id operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Sucess author found"),
+            @ApiResponse(code = 404, message = "Author not found error code")
+    })
+    AuthorDTO findById(Long id);
+
 }

@@ -4,6 +4,7 @@ import com.erik.bookstoremanager.author.builder.AuthorDTOBuilder;
 import com.erik.bookstoremanager.author.dto.AuthorDTO;
 import com.erik.bookstoremanager.author.entity.Author;
 import com.erik.bookstoremanager.author.exception.AuthorAlreadyExistsException;
+import com.erik.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.erik.bookstoremanager.author.mapper.AuthorMapper;
 import com.erik.bookstoremanager.author.repository.AuthorRepository;
 import org.hamcrest.core.Is;
@@ -65,5 +66,30 @@ public class AuthorServiceTest {
 
         assertThrows(AuthorAlreadyExistsException.class, () ->
                 authorService.create(expectedAuthorToCreateDTO));
+    }
+
+    @Test
+    void whenValidIdIsGivenThenAnAuthorShouldBeReturned() {
+
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+        Author expectedFoundAuthor = authorMapper.toModel(expectedFoundAuthorDTO);
+
+        when(authorRepository.findById(expectedFoundAuthorDTO.getId())).thenReturn(Optional.of(expectedFoundAuthor));
+
+        AuthorDTO foundAuthorDTO = authorService.findById(expectedFoundAuthorDTO.getId());
+
+        assertThat(foundAuthorDTO, Is.is(IsEqual.equalTo((expectedFoundAuthorDTO))));
+
+    }
+
+    @Test
+    void whenInvalidIdIsGivenThenAnExceptionShouldBeThrown() {
+
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+
+        when(authorRepository.findById(expectedFoundAuthorDTO.getId())).thenReturn(Optional.empty());
+
+        assertThrows(AuthorNotFoundException.class, () -> authorService.findById(expectedFoundAuthorDTO.getId()));
+
     }
 }

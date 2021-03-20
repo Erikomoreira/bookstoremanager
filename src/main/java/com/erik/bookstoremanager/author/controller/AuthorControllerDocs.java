@@ -13,7 +13,7 @@ public interface AuthorControllerDocs {
 
     @ApiOperation(value = "Author creation operation")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Sucess author creation"),
+            @ApiResponse(code = 201, message = "Success author creation"),
             @ApiResponse(code = 400, message = "Missing required fields, wrong field range value or author already registered")
     })
     AuthorDTO create(AuthorDTO authorDTO);
@@ -21,7 +21,7 @@ public interface AuthorControllerDocs {
 
     @ApiOperation(value = "Find author by id operation")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Sucess author found"),
+            @ApiResponse(code = 200, message = "Success author found"),
             @ApiResponse(code = 404, message = "Author not found error code")
     })
     AuthorDTO findById(Long id);
@@ -31,5 +31,12 @@ public interface AuthorControllerDocs {
             @ApiResponse(code = 200, message = "Return all registered authors"),
     })
     List<AuthorDTO> findAll();
+
+    @ApiOperation(value = "Deleted author by id operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success author deleted"),
+            @ApiResponse(code = 404, message = "Author not found error code")
+    })
+    void delete(Long id);
 
 }

@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 public class AuthorController implements AuthorControllerDocs {
 
-    private AuthorService authorService;
+    private final AuthorService authorService;
 
     @Autowired
     public AuthorController(AuthorService authorService) {
@@ -24,5 +24,10 @@ public class AuthorController implements AuthorControllerDocs {
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDTO create(@RequestBody @Valid AuthorDTO authorDTO) {
         return authorService.create(authorDTO);
+    }
+
+    @GetMapping("/{id}")
+    public AuthorDTO findById(@PathVariable Long id) {
+        return authorService.findById(id);
     }
 }

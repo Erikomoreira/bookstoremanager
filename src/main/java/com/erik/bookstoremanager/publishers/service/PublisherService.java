@@ -38,6 +38,12 @@ public class PublisherService {
                 .orElseThrow(() -> new PublisherNotFoundException(id));
     }
 
+    public void delete(Long id) {
+        verifyIfExists(id);
+        publisherRepository.deleteById(id);
+    }
+
+
     public List<PublisherDTO> findAll() {
         return publisherRepository.findAll().stream().map(publisherMapper::toDTO).collect(Collectors.toList());
     }
@@ -47,5 +53,9 @@ public class PublisherService {
         if (duplicatedPublisher.isPresent()) {
             throw new PublisherAlreadyExistsException(name, code);
         }
+    }
+
+    private void verifyIfExists(Long id) {
+        publisherRepository.findById(id).orElseThrow(() -> new PublisherNotFoundException(id));
     }
 }

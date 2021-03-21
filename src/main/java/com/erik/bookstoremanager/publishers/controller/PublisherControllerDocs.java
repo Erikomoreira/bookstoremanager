@@ -31,4 +31,11 @@ public interface PublisherControllerDocs {
     })
     List<PublisherDTO> findAll();
 
+    @ApiOperation(value = "Deleted publisher by id operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Success publisher deleted"),
+            @ApiResponse(code = 204, message = "Publisher not found error"),
+    })
+    void delete(Long id);
+
 }

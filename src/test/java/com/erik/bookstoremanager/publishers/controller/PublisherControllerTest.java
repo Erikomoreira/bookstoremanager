@@ -12,13 +12,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import static com.erik.bookstoremanager.utils.JsonConversionUtils.asJsonString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,7 +53,7 @@ public class PublisherControllerTest {
 
         when(publisherService.create(expectedCreatedPublisherDTO)).thenReturn(expectedCreatedPublisherDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(PUBLISHERS_API_URL_PATH)
+        mockMvc.perform(post(PUBLISHERS_API_URL_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(expectedCreatedPublisherDTO)))
                 .andExpect(status().isCreated())
@@ -66,9 +67,26 @@ public class PublisherControllerTest {
         PublisherDTO expectedCreatedPublisherDTO = publisherDTOBuilder.buildPublisherDTO();
         expectedCreatedPublisherDTO.setName(null);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(PUBLISHERS_API_URL_PATH)
+        mockMvc.perform(post(PUBLISHERS_API_URL_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(expectedCreatedPublisherDTO)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void whenGETWithValidIdIsCalledThenOkStatusShouldBeInformed() throws Exception {
+        PublisherDTO expectedCreatedPublisherDTO = publisherDTOBuilder.buildPublisherDTO();
+        Long expectedPublisherDTOId = expectedCreatedPublisherDTO.getId();
+
+        when(publisherService.findById(expectedPublisherDTOId)).thenReturn(expectedCreatedPublisherDTO);
+
+        mockMvc.perform(get(PUBLISHERS_API_URL_PATH + "/" + expectedPublisherDTOId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(expectedPublisherDTOId.intValue())))
+                .andExpect(jsonPath("$.name", is(expectedCreatedPublisherDTO.getName())))
+                .andExpect(jsonPath("$.code", is(expectedCreatedPublisherDTO.getCode())));
+    }
+
+
 }

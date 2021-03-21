@@ -4,6 +4,7 @@ import com.erik.bookstoremanager.publishers.builder.PublisherDTOBuilder;
 import com.erik.bookstoremanager.publishers.dto.PublisherDTO;
 import com.erik.bookstoremanager.publishers.entity.Publisher;
 import com.erik.bookstoremanager.publishers.exception.PublisherAlreadyExistsException;
+import com.erik.bookstoremanager.publishers.exception.PublisherNotFoundException;
 import com.erik.bookstoremanager.publishers.mappers.PublisherMapper;
 import com.erik.bookstoremanager.publishers.repository.PublisherRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,4 +65,26 @@ public class PublisherServiceTest {
         assertThrows(PublisherAlreadyExistsException.class, () -> publisherService.create(expectedPublisherToCreateDTO));
     }
 
+    @Test
+    void whenValidIdIsGivenThenAPublisherShouldBeReturned() {
+        PublisherDTO expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
+        Publisher expectedPublisherFound = publisherMapper.toModel(expectedPublisherFoundDTO);
+        var expectedPublisherFoundId = expectedPublisherFoundDTO.getId();
+
+        when(publisherRepository.findById(expectedPublisherFoundId)).thenReturn(Optional.of(expectedPublisherFound));
+
+        PublisherDTO foundPublisherDTO = publisherService.findById(expectedPublisherFoundId);
+
+        assertThat(foundPublisherDTO, is(equalTo(foundPublisherDTO)));
+    }
+
+    @Test
+    void whenInvalidIdIsGivenThenAnExceptionThrown() {
+        PublisherDTO expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
+        var expectedPublisherFoundId = expectedPublisherFoundDTO.getId();
+
+        when(publisherRepository.findById(expectedPublisherFoundId)).thenReturn(Optional.empty());
+
+        assertThrows(PublisherNotFoundException.class, () -> publisherService.findById(expectedPublisherFoundId));
+    }
 }

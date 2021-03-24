@@ -4,6 +4,7 @@ import com.erik.bookstoremanager.users.dto.MessageDTO;
 import com.erik.bookstoremanager.users.dto.UserDTO;
 import com.erik.bookstoremanager.users.entity.User;
 import com.erik.bookstoremanager.users.exception.UserAlreadyExistsException;
+import com.erik.bookstoremanager.users.exception.UserNotFoundException;
 import com.erik.bookstoremanager.users.mapper.UserMapper;
 import com.erik.bookstoremanager.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,11 @@ public class UserService {
         return creationMessage(createdUser);
     }
 
+    public void delete(Long id){
+        verifyIfExists(id);
+        userRepository.deleteById(id);
+    }
+
     private MessageDTO creationMessage(User createdUser) {
         String createdUserName = createdUser.getUsername();
         Long createdId = createdUser.getId();
@@ -44,5 +50,10 @@ public class UserService {
         if (foundUser.isPresent()) {
             throw new UserAlreadyExistsException(email, username);
         }
+    }
+
+    private void verifyIfExists(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 }

@@ -14,12 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,7 +57,7 @@ public class UserControllerTest {
 
         when(userService.create(expectedUserToCreateDTO)).thenReturn(expectedCreationMessageDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(USERS_API_URL_PATH)
+        mockMvc.perform(post(USERS_API_URL_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonConversionUtils.asJsonString(expectedUserToCreateDTO)))
                 .andExpect(status().isCreated())
@@ -67,9 +69,20 @@ public class UserControllerTest {
         UserDTO expectedUserToCreateDTO = userDTOBuilder.buildUserDTO();
         expectedUserToCreateDTO.setUsername(null);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(USERS_API_URL_PATH)
+        mockMvc.perform(post(USERS_API_URL_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonConversionUtils.asJsonString(expectedUserToCreateDTO)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void whenDELETIsCalledThenNoContentShouldBeInformed() throws Exception {
+        UserDTO expectedUserDeleteDTO = userDTOBuilder.buildUserDTO();
+
+        doNothing().when(userService).delete(expectedUserDeleteDTO.getId());
+
+        mockMvc.perform(delete(USERS_API_URL_PATH + "/" + expectedUserDeleteDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 }

@@ -2,6 +2,7 @@ package com.erik.bookstoremanager.users.builder;
 
 import com.erik.bookstoremanager.users.dto.UserDTO;
 import com.erik.bookstoremanager.users.enums.Gender;
+import com.erik.bookstoremanager.users.enums.Role;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -33,8 +34,11 @@ public class UserDTOBuilder {
     @Builder.Default
     private LocalDate birthDate = LocalDate.of(1996, 1, 1);
 
+    @Builder.Default
+    private Role role = Role.USER;
+
     public UserDTO buildUserDTO(){
-        return new UserDTO(id, name, age, gender, email, username, password, birthDate);
+        return new UserDTO(id, name, age, gender, email, username, password, birthDate, role);
     }
 
 }

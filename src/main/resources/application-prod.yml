@@ -16,5 +16,9 @@ spring:
 
 logging:
   level:
-      com:
-        erik: INFO
+    com:
+      erik: INFO
+
+jwt:
+  secret: bookstoremanager
+  validity: 18000

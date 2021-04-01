@@ -15,12 +15,11 @@ import java.util.function.Function;
 @Component
 public class JwtTokenManager {
 
-    private Long jwtTokenValidity;
-    private String secret;
+    private final Long jwtTokenValidity;
+    private final String secret;
 
-    public JwtTokenManager(
-            @Value("${jwt.validity}") Long jwtTokenValidity,
-            @Value("${jwt.secret}") String secret) {
+    public JwtTokenManager(@Value("${jwt.validity}") Long jwtTokenValidity,
+                           @Value("${jwt.secret}") String secret) {
         this.jwtTokenValidity = jwtTokenValidity;
         this.secret = secret;
     }
@@ -35,7 +34,7 @@ public class JwtTokenManager {
                 .setClaims(claims).setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtTokenValidity * 1000))
-                .signWith(SignatureAlgorithm.ES512, secret).compact();
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
     public String getUsernameFromToken(String token) {
@@ -52,11 +51,10 @@ public class JwtTokenManager {
     }
 
     private Claims getAllClaimsForToken(String token) {
-        Claims claims = Jwts.parser()
+        return Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody();
-        return claims;
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {

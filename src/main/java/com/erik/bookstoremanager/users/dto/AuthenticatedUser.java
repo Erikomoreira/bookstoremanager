@@ -14,9 +14,9 @@ public class AuthenticatedUser implements UserDetails {
 
     private static final String ROLE_PREFIX = "ROLE_";
 
-    private String username;
-    private String password;
-    private Role role;
+    private final String username;
+    private final String password;
+    private final Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -35,7 +35,7 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override

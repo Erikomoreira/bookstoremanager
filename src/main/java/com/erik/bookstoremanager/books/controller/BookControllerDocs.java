@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Api("Books module management")
 public interface BookControllerDocs {
 
@@ -28,4 +30,11 @@ public interface BookControllerDocs {
     BookResponseDTO findByIdAndUser(
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
             @PathVariable Long bookId);
+
+    @ApiOperation(value = "List all books by a specific authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Book list found by authenticated user informed")
+    })
+    List<BookResponseDTO> findAllByUser(AuthenticatedUser authenticatedUser);
+
 }

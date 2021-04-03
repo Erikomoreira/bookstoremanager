@@ -131,6 +131,5 @@ class BookServiceTest {
                 any(User.class))).thenReturn(Optional.empty());
 
         assertThrows(BookNotFoundException.class, () -> bookService.findByIdAndUser(authenticatedUser, expectedBookToFindDTO.getId()));
-
     }
 }

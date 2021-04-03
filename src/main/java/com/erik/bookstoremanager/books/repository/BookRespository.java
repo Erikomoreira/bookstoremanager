@@ -16,4 +16,6 @@ public interface BookRespository extends JpaRepository<Book, Long> {
     Optional<Book> findByIdAndUser(Long id, User user);
 
     List<Book> findAllByUser(User user);
+
+    void deleteByIdAndUser(Long id, User user);
 }

@@ -34,8 +34,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -161,4 +160,30 @@ class BookServiceTest {
         assertThat(returnedBooksResponseList.size(), is(0));
     }
 
+    @Test
+    void whenExistingBookIdIsInformedThenItShouldBeDeleted() {
+        BookResponseDTO expectedBookToDeleteDTO = bookResponseDTOBuilder.buildResponseBookDTO();
+        Book expectedBookToDelete = bookMapper.toModel(expectedBookToDeleteDTO);
+
+        when(userService.verifyAndGetUserIfExists(authenticatedUser.getUsername())).thenReturn(new User());
+        when(bookRespository.findByIdAndUser(eq(expectedBookToDelete.getId()), any(User.class)))
+                .thenReturn(Optional.of(expectedBookToDelete));
+
+        doNothing().when(bookRespository).deleteByIdAndUser(eq(expectedBookToDeleteDTO.getId()), any(User.class));
+
+        bookService.deleteByIdAndUser(authenticatedUser, expectedBookToDeleteDTO.getId());
+
+        verify(bookRespository, times(1)).deleteByIdAndUser(eq(expectedBookToDeleteDTO.getId()), any(User.class));
+    }
+
+    @Test
+    void whenNotExistingBookIdIsInformedThenAnExceptionShouldBeThrown() {
+        BookResponseDTO expectedBookToDeleteDTO = bookResponseDTOBuilder.buildResponseBookDTO();
+
+        when(userService.verifyAndGetUserIfExists(authenticatedUser.getUsername())).thenReturn(new User());
+        when(bookRespository.findByIdAndUser(eq(expectedBookToDeleteDTO.getId()), any(User.class)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(BookNotFoundException.class, () -> bookService.deleteByIdAndUser(authenticatedUser, expectedBookToDeleteDTO.getId()));
+    }
 }

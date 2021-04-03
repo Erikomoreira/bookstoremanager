@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @Service
 public class PublisherService {
 
-    private final static PublisherMapper publisherMapper = PublisherMapper.INSTANCE;
+    private static final PublisherMapper publisherMapper = PublisherMapper.INSTANCE;
 
-    private PublisherRepository publisherRepository;
+    private final PublisherRepository publisherRepository;
 
     @Autowired
     public PublisherService(PublisherRepository publisherRepository) {
@@ -26,7 +26,7 @@ public class PublisherService {
     }
 
     public PublisherDTO create(PublisherDTO publisherDTO) {
-        verifyIfExists(publisherDTO.getName(), publisherDTO.getCode());
+        verifyAndGetIfExists(publisherDTO.getName(), publisherDTO.getCode());
         Publisher publisherToCreate = publisherMapper.toModel(publisherDTO);
         Publisher createdPublisher = publisherRepository.save(publisherToCreate);
         return publisherMapper.toDTO(createdPublisher);
@@ -39,7 +39,7 @@ public class PublisherService {
     }
 
     public void delete(Long id) {
-        verifyIfExists(id);
+        verifyAndGetIfExists(id);
         publisherRepository.deleteById(id);
     }
 
@@ -48,14 +48,14 @@ public class PublisherService {
         return publisherRepository.findAll().stream().map(publisherMapper::toDTO).collect(Collectors.toList());
     }
 
-    private void verifyIfExists(String name, String code) {
+    private void verifyAndGetIfExists(String name, String code) {
         Optional<Publisher> duplicatedPublisher = publisherRepository.findByNameOrCode(name, code);
         if (duplicatedPublisher.isPresent()) {
             throw new PublisherAlreadyExistsException(name, code);
         }
     }
 
-    private void verifyIfExists(Long id) {
-        publisherRepository.findById(id).orElseThrow(() -> new PublisherNotFoundException(id));
+    public Publisher verifyAndGetIfExists(Long id) {
+       return publisherRepository.findById(id).orElseThrow(() -> new PublisherNotFoundException(id));
     }
 }

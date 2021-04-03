@@ -125,4 +125,22 @@ class BookControllerTest {
                 .andExpect(status().isNoContent());
 
     }
+
+    @Test
+    void whenPUTIsCalledThenOkStatusShouldBeReturned() throws Exception {
+        BookRequestDTO expectedBookToUpdateDTO = bookRequestDTOBuilder.buildRequestBookDTO();
+        BookResponseDTO expectedUpdatedBookDTO = bookResponseDTOBuilder.buildResponseBookDTO();
+
+        when(bookService.updateByIdAndUser(any(AuthenticatedUser.class),
+                eq(expectedUpdatedBookDTO.getId()), eq(expectedBookToUpdateDTO)))
+                .thenReturn(expectedUpdatedBookDTO);
+
+        mockMvc.perform(put(BOOKS_API_URL_PATH + "/" + expectedBookToUpdateDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(expectedBookToUpdateDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(expectedUpdatedBookDTO.getId().intValue())))
+                .andExpect(jsonPath("$.name", is(expectedUpdatedBookDTO.getName())))
+                .andExpect(jsonPath("$.isbn", is(expectedUpdatedBookDTO.getIsbn())));
+    }
 }

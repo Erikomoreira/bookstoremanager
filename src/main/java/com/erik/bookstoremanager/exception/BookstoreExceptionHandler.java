@@ -59,7 +59,7 @@ public class BookstoreExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     public ResponseEntity<Object> buildResponseEntity(HttpStatus httpStatus, String message, List<String> errors) {
-        ApiError apiError = ApiError.builder()
+        var apiError = ApiError.builder()
                 .code(httpStatus.value())
                 .status(httpStatus.getReasonPhrase())
                 .message(message)

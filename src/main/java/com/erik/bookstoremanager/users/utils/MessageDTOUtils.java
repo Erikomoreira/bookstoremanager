@@ -16,7 +16,7 @@ public class MessageDTOUtils {
     private static MessageDTO returnMessage(User user, String action) {
         String updatedUserName = user.getUsername();
         Long updatedId = user.getId();
-        String updatedUserMessage = String.format("User %s with ID %s successfully %s", updatedUserName, updatedId, action);
+        var updatedUserMessage = String.format("User %s with ID %s successfully %s", updatedUserName, updatedId, action);
         return MessageDTO.builder()
                 .message(updatedUserMessage)
                 .build();

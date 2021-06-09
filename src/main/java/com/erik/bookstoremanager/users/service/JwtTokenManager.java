@@ -46,7 +46,7 @@ public class JwtTokenManager {
     }
 
     private <T> T getClaimForToken(String token, Function<Claims, T> claimsResolver) {
-        Claims claims = getAllClaimsForToken(token);
+        var claims = getAllClaimsForToken(token);
         return claimsResolver.apply(claims);
     }
 
@@ -63,7 +63,7 @@ public class JwtTokenManager {
     }
 
     private boolean isTokenExpired(String token) {
-        Date expirationDate = getExpirationDateFromToken(token);
+        var expirationDate = getExpirationDateFromToken(token);
         return expirationDate.before(new Date());
     }
 }

@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class PublisherControllerTest {
+class PublisherControllerTest {
 
     private final static String PUBLISHERS_API_URL_PATH = "/api/v1/publishers";
 

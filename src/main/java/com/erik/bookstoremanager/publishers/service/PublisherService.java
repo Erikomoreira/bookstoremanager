@@ -27,8 +27,8 @@ public class PublisherService {
 
     public PublisherDTO create(PublisherDTO publisherDTO) {
         verifyAndGetIfExists(publisherDTO.getName(), publisherDTO.getCode());
-        Publisher publisherToCreate = publisherMapper.toModel(publisherDTO);
-        Publisher createdPublisher = publisherRepository.save(publisherToCreate);
+        var publisherToCreate = publisherMapper.toModel(publisherDTO);
+        var createdPublisher = publisherRepository.save(publisherToCreate);
         return publisherMapper.toDTO(createdPublisher);
     }
 

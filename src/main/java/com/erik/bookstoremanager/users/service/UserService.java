@@ -19,35 +19,35 @@ import static com.erik.bookstoremanager.users.utils.MessageDTOUtils.updatedMessa
 @Service
 public class UserService {
 
-    private final static UserMapper userMapper = UserMapper.INSTANCE;
+    private static final UserMapper userMapper = UserMapper.INSTANCE;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public MessageDTO create(UserDTO userCreateDTO) {
         verifyIfExists(userCreateDTO.getEmail(), userCreateDTO.getUsername());
-        User userToCreate = userMapper.toModel(userCreateDTO);
+        var userToCreate = userMapper.toModel(userCreateDTO);
         userToCreate.setPassword(passwordEncoder.encode(userToCreate.getPassword()));
-        User createdUser = userRepository.save(userToCreate);
+        var createdUser = userRepository.save(userToCreate);
         return creationMessage(createdUser);
     }
 
     public MessageDTO update(Long id, UserDTO userToUpdateDTO) {
-        User foundUser = verifyAndGetIfExists(id);
+        var foundUser = verifyAndGetIfExists(id);
 
         userToUpdateDTO.setId(foundUser.getId());
-        User userToUpdate = userMapper.toModel(userToUpdateDTO);
+        var userToUpdate = userMapper.toModel(userToUpdateDTO);
         userToUpdate.setPassword(passwordEncoder.encode(userToUpdate.getPassword()));
         userToUpdate.setCreatedDate(foundUser.getCreatedDate());
 
-        User updatedUser = userRepository.save(userToUpdate);
+        var updatedUser = userRepository.save(userToUpdate);
 
         return updatedMessage(updatedUser);
     }

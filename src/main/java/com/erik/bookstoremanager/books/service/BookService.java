@@ -1,6 +1,5 @@
 package com.erik.bookstoremanager.books.service;
 
-import com.erik.bookstoremanager.author.entity.Author;
 import com.erik.bookstoremanager.author.service.AuthorService;
 import com.erik.bookstoremanager.books.dto.BookRequestDTO;
 import com.erik.bookstoremanager.books.dto.BookResponseDTO;
@@ -9,7 +8,6 @@ import com.erik.bookstoremanager.books.exception.BookAlreadyExistsException;
 import com.erik.bookstoremanager.books.exception.BookNotFoundException;
 import com.erik.bookstoremanager.books.mapper.BookMapper;
 import com.erik.bookstoremanager.books.repository.BookRespository;
-import com.erik.bookstoremanager.publishers.entity.Publisher;
 import com.erik.bookstoremanager.publishers.service.PublisherService;
 import com.erik.bookstoremanager.users.dto.AuthenticatedUser;
 import com.erik.bookstoremanager.users.entity.User;
@@ -37,30 +35,30 @@ public class BookService {
     private final PublisherService publisherService;
 
     public BookResponseDTO create(AuthenticatedUser authenticatedUser, BookRequestDTO bookRequestDTO) {
-        User foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
-        Author foundAuthor = authorService.verifyAndGetIfExists(bookRequestDTO.getAuthorId());
-        Publisher foundPublisher = publisherService.verifyAndGetIfExists(bookRequestDTO.getPublisherId());
+        var foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
+        var foundAuthor = authorService.verifyAndGetIfExists(bookRequestDTO.getAuthorId());
+        var foundPublisher = publisherService.verifyAndGetIfExists(bookRequestDTO.getPublisherId());
 
         verifyIfBookIsAlreadyRegistered(foundAuthenticatedUser, bookRequestDTO);
 
-        Book bookToSave = bookMapper.toModel(bookRequestDTO);
+        var bookToSave = bookMapper.toModel(bookRequestDTO);
         bookToSave.setUser(foundAuthenticatedUser);
         bookToSave.setAuthor(foundAuthor);
         bookToSave.setPublisher(foundPublisher);
-        Book savedBook = bookRespository.save(bookToSave);
+        var savedBook = bookRespository.save(bookToSave);
 
         return bookMapper.toDTO(savedBook);
     }
 
     public BookResponseDTO findByIdAndUser(AuthenticatedUser authenticatedUser, Long bookId) {
-        User foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
+        var foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
         return bookRespository.findByIdAndUser(bookId, foundAuthenticatedUser)
                 .map(bookMapper::toDTO)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
     public List<BookResponseDTO> findAllByUser(AuthenticatedUser authenticatedUser) {
-        User foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
+        var foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
         return bookRespository.findAllByUser(foundAuthenticatedUser)
                 .stream()
                 .map(bookMapper::toDTO)
@@ -69,26 +67,26 @@ public class BookService {
 
     @Transactional
     public void deleteByIdAndUser(AuthenticatedUser authenticatedUser, Long bookId) {
-        User foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
-        Book foundBookToDelete = verifyAndGetIfExists(bookId, foundAuthenticatedUser);
+        var foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
+        var foundBookToDelete = verifyAndGetIfExists(bookId, foundAuthenticatedUser);
 
         bookRespository.deleteByIdAndUser(foundBookToDelete.getId(), foundAuthenticatedUser);
     }
 
     public BookResponseDTO updateByIdAndUser(AuthenticatedUser authenticatedUser, Long bookId, BookRequestDTO bookRequestDTO){
-        User foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
-        Book foundBook = verifyAndGetIfExists(bookId, foundAuthenticatedUser);
-        Author foundAuthor = authorService.verifyAndGetIfExists(bookRequestDTO.getAuthorId());
-        Publisher foundPublisher = publisherService.verifyAndGetIfExists(bookRequestDTO.getPublisherId());
+        var foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
+        var foundBook = verifyAndGetIfExists(bookId, foundAuthenticatedUser);
+        var foundAuthor = authorService.verifyAndGetIfExists(bookRequestDTO.getAuthorId());
+        var foundPublisher = publisherService.verifyAndGetIfExists(bookRequestDTO.getPublisherId());
 
 
-        Book bookToUpdate = bookMapper.toModel(bookRequestDTO);
+        var bookToUpdate = bookMapper.toModel(bookRequestDTO);
         bookToUpdate.setId(foundBook.getId());
         bookToUpdate.setUser(foundAuthenticatedUser);
         bookToUpdate.setAuthor(foundAuthor);
         bookToUpdate.setPublisher(foundPublisher);
         bookToUpdate.setCreatedDate(foundBook.getCreatedDate());
-        Book updatedBook = bookRespository.save(bookToUpdate);
+        var updatedBook = bookRespository.save(bookToUpdate);
         return bookMapper.toDTO(updatedBook);
     }
 
